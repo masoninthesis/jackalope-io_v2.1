@@ -50,7 +50,7 @@ add_filter('template_include', function ($template) {
     echo template($template, apply_filters('sage/template_data', []));
 
     // Return a blank file to make WordPress happy
-    return get_template_directory() . '/index.php';
+    return dirname(__DIR__) . '/index.php';
 }, 1000);
 
 /**
