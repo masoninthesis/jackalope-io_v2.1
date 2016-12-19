@@ -34,24 +34,27 @@ add_filter('excerpt_more', function () {
 array_map(function ($type) {
     add_filter("{$type}_template_hierarchy", function ($templates) {
         return call_user_func_array('array_merge', array_map(function ($template) {
-            $normalizedTemplate = str_replace('.', '/', sage('blade')->normalizeViewPath($template));
+            $normalizedTemplate = preg_replace('%(\.blade)?(\.php)?$%', '', $template);
             return ["{$normalizedTemplate}.blade.php", "{$normalizedTemplate}.php"];
         }, $templates));
     });
 }, [
     'index', '404', 'archive', 'author', 'category', 'tag', 'taxonomy', 'date', 'home',
-    'front_page', 'page', 'paged', 'search', 'single', 'singular', 'attachment'
+    'frontpage', 'page', 'paged', 'search', 'single', 'singular', 'attachment'
 ]);
 
 /**
  * Render page using Blade
  */
 add_filter('template_include', function ($template) {
-    echo template($template, apply_filters('sage/template_data', []));
+    $data = array_reduce(get_body_class(), function ($data, $class) use ($template) {
+        return apply_filters("sage/template/{$class}/data", $data, $template);
+    }, []);
+    echo template($template, $data);
 
     // Return a blank file to make WordPress happy
-    return dirname(__DIR__) . '/index.php';
-}, 1000);
+    return get_template_directory() . '/index.php';
+}, PHP_INT_MAX);
 
 /**
  * Tell WordPress how to find the compiled path of comments.blade.php
