@@ -6,8 +6,6 @@ $root_dir = dirname(__DIR__);
 /** @var string Document Root */
 $webroot_dir = $root_dir . '/web';
 
-define('WP_DEFAULT_THEME', 'sage');
-
 /**
  * Expose global env() function from oscarotero/env
  */
